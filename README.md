@@ -2,6 +2,8 @@
 
 Provision the [OpenTelemetry Astronomy Shop](https://github.com/open-telemetry/opentelemetry-demo) running on a GKE Autopilot cluster and sending data to an Elastic Cloud (ESS) cluster. Trigger failure scenarios via flagd or [Chaos Mesh](https://chaos-mesh.org/), then analyse the results in Kibana.
 
+![OTel Demo Overview](assets/overview.png)
+
 ---
 
 ## Table of Contents
