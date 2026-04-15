@@ -19,7 +19,7 @@ Provision the [OpenTelemetry Astronomy Shop](https://github.com/open-telemetry/o
   - [Method 3: kubectl script](#method-3-kubectl-script)
   - [Method 4: Chaos Mesh](#method-4-chaos-mesh)
 - [Failure Scenario Catalogue](#failure-scenario-catalogue)
-- [Teardown](#teardown)
+- [Cluster Management](#cluster-management)
 
 ---
 
@@ -547,16 +547,38 @@ All flagd flags default to `off`. See `flagd/demo.flagd.json` for the full flag 
 
 ---
 
-## Teardown
+## Cluster Management
+
+### Retrieve credentials
+
+If you need to log back into Kibana or Elasticsearch, fetch your credentials at any time:
+
+```bash
+oblt-cli cluster secrets credentials --cluster-name <cluster-name>
+```
+
+### Retrieve Kibana config
+
+Downloads a sample `kibana.yml` pre-configured for your cluster — useful if you want to run a local Kibana instance pointing at the ESS deployment:
+
+```bash
+oblt-cli cluster secrets kibana-config --cluster-name <cluster-name>
+```
+
+### Destroy the cluster
+
+Tears down both the GKE Kubernetes cluster and the ESS (Elasticsearch + Kibana) deployment. You'll get a Slack DM when it's done (~5 minutes).
+
+```bash
+oblt-cli cluster destroy --cluster-name <cluster-name>
+```
+
+> `oblt-cli` requires an interactive terminal for the confirmation prompt — it cannot be piped. Type `yes` when asked.
+
+You can also use the helper script (which prompts for confirmation first):
 
 ```bash
 ./scripts/teardown.sh <cluster-name>
-```
-
-Or directly:
-
-```bash
-oblt-cli cluster destroy --cluster-name=<cluster-name>
 ```
 
 ---
