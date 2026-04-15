@@ -12,6 +12,7 @@ Provision the [OpenTelemetry Astronomy Shop](https://github.com/open-telemetry/o
   - [Installing oblt-cli](#installing-oblt-cli)
 - [Create the Cluster](#create-the-cluster)
 - [Access the Demo](#access-the-demo)
+- [Managing the Kubernetes Infrastructure](#managing-the-kubernetes-infrastructure)
 - [Triggering Failure Scenarios](#triggering-failure-scenarios)
   - [Method 1: flagd UI](#method-1-flagd-ui)
   - [Method 2: flagd API (curl)](#method-2-flagd-api-curl)
@@ -154,6 +155,44 @@ pkill -f "kubectl port-forward svc/frontend-proxy"
 | [http://localhost:8080/feature](http://localhost:8080/feature) | flagd feature flag UI |
 | [http://localhost:8080/loadgen](http://localhost:8080/loadgen) | Load generator UI |
 | [http://localhost:8080/jaeger/ui](http://localhost:8080/jaeger/ui) | Jaeger trace UI |
+
+---
+
+## Managing the Kubernetes Infrastructure
+
+Once `kubectl` is configured (via `oblt-cli cluster k8s`), you have full access to inspect and modify every workload in the cluster.
+
+![kubectl get deployments](assets/kubectl-deployments.png)
+
+### Useful commands
+
+```bash
+# List all deployments and their status
+kubectl get deployments
+
+# List all running pods
+kubectl get pods
+
+# Describe a specific deployment (resource limits, env vars, events)
+kubectl describe deployment frontend
+
+# Scale a deployment up or down
+kubectl scale deployment recommendation --replicas=0
+
+# Restart a deployment (triggers a rolling restart)
+kubectl rollout restart deployment/payment
+
+# Edit a deployment's environment variables inline
+kubectl set env deployment/load-generator LOCUST_USERS=5
+
+# View logs for a service
+kubectl logs -l app.kubernetes.io/component=checkout --tail=50 -f
+
+# Get a shell inside a running container
+kubectl exec -it deploy/frontend -- sh
+```
+
+> All commands operate against the namespace set in your current `kubectl` context. Run `kubectl config view --minify -o jsonpath='{..namespace}'` to confirm which namespace you're targeting.
 
 ---
 
