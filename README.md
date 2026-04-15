@@ -112,6 +112,16 @@ Run this once after configuring `kubectl` access. It resets all failure flags to
 ./scripts/init-cluster.sh
 ```
 
+### Destroy the cluster
+
+When you're done, tear everything down (GKE cluster + ESS deployment) with:
+
+```bash
+oblt-cli cluster destroy --cluster-name <your-cluster-name>
+```
+
+> This requires an interactive terminal — type `yes` when prompted. You'll get a Slack DM when teardown is complete (~5 minutes). See [Cluster Management](#cluster-management) for more cluster commands.
+
 ---
 
 ## Access the Demo
