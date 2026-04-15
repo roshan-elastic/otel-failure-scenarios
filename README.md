@@ -12,6 +12,7 @@ Provision the [OpenTelemetry Astronomy Shop](https://github.com/open-telemetry/o
   - [Installing oblt-cli](#installing-oblt-cli)
 - [Create the Cluster](#create-the-cluster)
 - [Access the Demo](#access-the-demo)
+- [Validating the Cluster in GCP](#validating-the-cluster-in-gcp)
 - [Managing the Kubernetes Infrastructure](#managing-the-kubernetes-infrastructure)
 - [Triggering Failure Scenarios](#triggering-failure-scenarios)
   - [Method 1: flagd UI](#method-1-flagd-ui)
@@ -165,6 +166,45 @@ pkill -f "kubectl port-forward svc/frontend-proxy"
 | [http://localhost:8080/feature](http://localhost:8080/feature) | flagd feature flag UI |
 | [http://localhost:8080/loadgen](http://localhost:8080/loadgen) | Load generator UI |
 | [http://localhost:8080/jaeger/ui](http://localhost:8080/jaeger/ui) | Jaeger trace UI |
+
+---
+
+## Validating the Cluster in GCP
+
+The `oteldemo` clusters run on GKE Autopilot in the `elastic-observability` GCP project. You can use the `gcloud` CLI to confirm your cluster exists and inspect its GCP-level configuration.
+
+### Prerequisites
+
+```bash
+# Install gcloud if needed
+brew install --cask google-cloud-sdk
+
+# Switch to your Elastic account
+gcloud config set account <your-email>@elastic.co
+```
+
+### Find your cluster
+
+```bash
+gcloud container clusters list --project elastic-observability | grep oteldemo
+```
+
+You'll see your cluster alongside any others currently running in the shared project:
+
+```
+NAME                   LOCATION     MASTER_VERSION       STATUS
+oteldemo-ullxj         us-central1  1.34.4-gke.1193000   RUNNING
+```
+
+### Inspect cluster details
+
+```bash
+gcloud container clusters describe <cluster-name> \
+  --project elastic-observability \
+  --region us-central1
+```
+
+This shows node pool configuration, machine types, autoscaling settings, and GCP-level networking — things not visible via `kubectl`.
 
 ---
 
