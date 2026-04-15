@@ -6,11 +6,12 @@
 #   2. Tune the load generator to stable settings (the template defaults OOMKill the pod)
 #
 # Usage:
-#   ./scripts/init-cluster.sh
+#   ./scripts/init-cluster.sh [cluster-name]
+#
+# If a cluster-name is provided, kubectl access is configured automatically
+# via oblt-cli before running the init steps.
 
 set -euo pipefail
-
-NAMESPACE="${NAMESPACE:-$(kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null || echo 'default')}"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -23,6 +24,29 @@ info()    { echo -e "${CYAN}[INFO]${NC}  $*"; }
 success() { echo -e "${GREEN}[OK]${NC}    $*"; }
 warn()    { echo -e "${YELLOW}[WARN]${NC}  $*"; }
 die()     { echo -e "${RED}[ERROR]${NC} $*" >&2; exit 1; }
+
+# ── Optional: configure kubectl via oblt-cli ──────────────────────────────────
+CLUSTER_NAME="${1:-}"
+if [[ -n "$CLUSTER_NAME" ]]; then
+  info "Configuring kubectl for cluster '${CLUSTER_NAME}'..."
+  oblt-cli cluster k8s --cluster-name "${CLUSTER_NAME}" || die "Failed to configure kubectl. Check your cluster name and oblt-cli auth."
+  echo ""
+fi
+
+# ── Verify kubectl can reach a live cluster ───────────────────────────────────
+CURRENT_CONTEXT=$(kubectl config current-context 2>/dev/null || true)
+if [[ -z "$CURRENT_CONTEXT" ]]; then
+  die "No kubectl context set. Run: oblt-cli cluster k8s --cluster-name <your-cluster-name>"
+fi
+
+info "Checking cluster connectivity (context: ${CURRENT_CONTEXT})..."
+if ! kubectl get nodes &>/dev/null; then
+  die "Cannot reach cluster '${CURRENT_CONTEXT}'. Run: oblt-cli cluster k8s --cluster-name <your-cluster-name>"
+fi
+success "Connected to cluster '${CURRENT_CONTEXT}'"
+echo ""
+
+NAMESPACE="${NAMESPACE:-$(kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null || echo 'default')}"
 
 echo -e "${BOLD}OTel Demo — cluster initialisation${NC}"
 echo "Namespace: ${NAMESPACE}"
@@ -89,4 +113,5 @@ echo "  Start port-forward:  kubectl port-forward svc/frontend-proxy 8080:8080 &
 echo "  Shop:                http://localhost:8080"
 echo "  Flag UI:             http://localhost:8080/feature"
 echo "  Load generator UI:   http://localhost:8080/loadgen"
+echo "  Jaeger UI:           http://localhost:8080/jaeger/ui"
 echo ""

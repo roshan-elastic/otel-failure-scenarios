@@ -99,18 +99,37 @@ A CI job runs (~5 minutes). When complete, **`oblt-robot-ci` sends you a Slack D
 - **Username and password** for Kibana login
 - Your cluster name (e.g. `oteldemo-ullxj`)
 
-You can also retrieve credentials at any time with:
+### Once you have your cluster name — run these steps in order
+
+**1. Initialise the cluster**
+
+Pass your cluster name to `init-cluster.sh` — it configures `kubectl`, resets all failure flags to off, and fixes the load generator in one step:
+
+```bash
+./scripts/init-cluster.sh <your-cluster-name>
+```
+
+**2. Start the port-forward**
+
+```bash
+kubectl port-forward svc/frontend-proxy 8080:8080 &>/dev/null &
+```
+
+**3. Open the demo**
+
+| URL | Description |
+|-----|-------------|
+| [http://localhost:8080](http://localhost:8080) | Astronomy Shop web store |
+| [http://localhost:8080/feature](http://localhost:8080/feature) | flagd feature flag UI |
+| [http://localhost:8080/loadgen](http://localhost:8080/loadgen) | Load generator UI |
+| [http://localhost:8080/jaeger/ui](http://localhost:8080/jaeger/ui) | Jaeger trace UI |
+
+> If you ever lose access (e.g. after a laptop sleep), re-run steps 1 and 2.
+
+You can retrieve credentials at any time with:
 
 ```bash
 oblt-cli cluster secrets credentials --cluster-name <your-cluster-name>
-```
-
-### Initialise the cluster
-
-Run this once after configuring `kubectl` access. It resets all failure flags to off and tunes the load generator to stable settings (the template defaults cause the load generator pod to OOMKill repeatedly):
-
-```bash
-./scripts/init-cluster.sh
 ```
 
 ### Destroy the cluster
@@ -133,39 +152,15 @@ Open the Kibana URL from the Slack message directly in your browser. No port-for
 
 Go to **Observability** to see traces, metrics, and logs from the OTel demo flowing in.
 
----
+### OTel Astronomy Shop — localhost via port-forward
 
-### OTel Astronomy Shop web app — kubectl port-forward required
+The demo web app has no external IP. Access it via `kubectl port-forward` as described in [the setup steps above](#once-you-have-your-cluster-name--run-these-steps-in-order).
 
-The demo web app runs inside the GKE cluster on a `ClusterIP` service — it has no external IP. **You must port-forward to access it from your laptop.**
-
-First configure `kubectl` (required once per session):
-
-```bash
-CLUSTER_NAME=<your-cluster-name>
-oblt-cli cluster k8s --cluster-name ${CLUSTER_NAME}
-```
-
-Then start the port-forward in the background:
-
-```bash
-kubectl port-forward svc/frontend-proxy 8080:8080 &>/dev/null &
-```
-
-To stop it:
+To stop the port-forward:
 
 ```bash
 pkill -f "kubectl port-forward svc/frontend-proxy"
 ```
-
-> Re-run `oblt-cli cluster k8s` if your kubectl credentials expire.
-
-| URL | Description |
-|-----|-------------|
-| [http://localhost:8080](http://localhost:8080) | Astronomy Shop web store |
-| [http://localhost:8080/feature](http://localhost:8080/feature) | flagd feature flag UI |
-| [http://localhost:8080/loadgen](http://localhost:8080/loadgen) | Load generator UI |
-| [http://localhost:8080/jaeger/ui](http://localhost:8080/jaeger/ui) | Jaeger trace UI |
 
 ---
 
