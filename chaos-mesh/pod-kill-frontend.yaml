@@ -1,0 +1,35 @@
+# Chaos Mesh experiment: kill the frontend pod every 5 minutes.
+# Useful for testing pod restart behaviour, observing Kubernetes self-healing,
+# and seeing how APM captures the gap in availability.
+#
+# Apply:
+#   kubectl apply -f chaos-mesh/pod-kill-frontend.yaml
+#
+# Remove:
+#   kubectl delete -f chaos-mesh/pod-kill-frontend.yaml
+#
+# Get your current namespace:
+#   kubectl config view --minify -o jsonpath='{..namespace}'
+#
+# Replace MY_NAMESPACE below with your actual cluster namespace before applying.
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: schedule-killpod-frontend
+  namespace: MY_NAMESPACE
+spec:
+  schedule: '*/5 * * * *'
+  historyLimit: 2
+  concurrencyPolicy: 'Forbid'
+  type: 'PodChaos'
+  podChaos:
+    action: pod-kill
+    mode: one
+    value: ''
+    gracePeriod: 0
+    selector:
+      namespaces:
+        - MY_NAMESPACE
+      labelSelectors:
+        'app.kubernetes.io/component': 'frontend'

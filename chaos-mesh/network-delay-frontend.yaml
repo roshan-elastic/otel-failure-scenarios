@@ -1,0 +1,35 @@
+# Chaos Mesh experiment: inject 60ms of network latency on the frontend pod
+# on a schedule of every 5 minutes, for 90 seconds each time.
+#
+# Apply:
+#   kubectl apply -f chaos-mesh/network-delay-frontend.yaml
+#
+# Remove:
+#   kubectl delete -f chaos-mesh/network-delay-frontend.yaml
+#
+# Get your current namespace:
+#   kubectl config view --minify -o jsonpath='{..namespace}'
+#
+# Replace MY_NAMESPACE below with your actual cluster namespace before applying.
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: schedule-delay-frontend
+  namespace: MY_NAMESPACE
+spec:
+  schedule: '*/5 * * * *'
+  historyLimit: 2
+  concurrencyPolicy: 'Forbid'
+  type: 'NetworkChaos'
+  networkChaos:
+    action: delay
+    mode: one
+    selector:
+      namespaces:
+        - MY_NAMESPACE
+      labelSelectors:
+        'app.kubernetes.io/component': 'frontend'
+    delay:
+      latency: '60ms'
+    duration: '90s'

@@ -1,0 +1,37 @@
+# Chaos Mesh experiment: apply memory stress to the adservice pod every 5 minutes.
+# 12 workers each allocating 25MB of memory, for 90 seconds.
+# Useful for demonstrating memory pressure detection in Kibana infrastructure views.
+#
+# Apply:
+#   kubectl apply -f chaos-mesh/memory-stress-adservice.yaml
+#
+# Remove:
+#   kubectl delete -f chaos-mesh/memory-stress-adservice.yaml
+#
+# Get your current namespace:
+#   kubectl config view --minify -o jsonpath='{..namespace}'
+#
+# Replace MY_NAMESPACE below with your actual cluster namespace before applying.
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: schedule-memory-stress-adservice
+  namespace: MY_NAMESPACE
+spec:
+  schedule: '*/5 * * * *'
+  historyLimit: 2
+  concurrencyPolicy: 'Allow'
+  type: 'StressChaos'
+  stressChaos:
+    selector:
+      namespaces:
+        - MY_NAMESPACE
+      labelSelectors:
+        'app.kubernetes.io/component': 'adservice'
+    mode: all
+    duration: '90s'
+    stressors:
+      memory:
+        workers: 12
+        size: '25MB'

@@ -1,0 +1,150 @@
+{
+  "$schema": "https://flagd.dev/schema/v0/flags.json",
+  "flags": {
+    "adFailure": {
+      "description": "Generate an error for GetAds ~1/10th of the time",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "adManualGc": {
+      "description": "Trigger full manual garbage collections in the ad service",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "adHighCpu": {
+      "description": "Trigger high CPU load in the ad service",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "cartFailure": {
+      "description": "Generate an error whenever EmptyCart is called",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "emailMemoryLeak": {
+      "description": "Simulate a memory leak in the email service",
+      "state": "ENABLED",
+      "variants": {
+        "off": 0,
+        "1x": 1,
+        "10x": 10,
+        "100x": 100,
+        "1000x": 1000,
+        "10000x": 10000
+      },
+      "defaultVariant": "off"
+    },
+    "failedReadinessProbe": {
+      "description": "Force the readiness probe to fail — Kubernetes only",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "imageSlowLoad": {
+      "description": "Inject a delay into product image loading via Envoy fault injection",
+      "state": "ENABLED",
+      "variants": {
+        "off": 0,
+        "5sec": 5000,
+        "10sec": 10000
+      },
+      "defaultVariant": "off"
+    },
+    "kafkaQueueProblems": {
+      "description": "Overload the Kafka queue and introduce a consumer-side delay",
+      "state": "ENABLED",
+      "variants": {
+        "on": 100,
+        "off": 0
+      },
+      "defaultVariant": "off"
+    },
+    "llmInaccurateResponse": {
+      "description": "Mock LLM returns an inaccurate product review summary for product ID L9ECAV7KIM",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "llmRateLimitError": {
+      "description": "Mock LLM intermittently returns HTTP 429 rate limit errors",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "loadGeneratorFloodHomepage": {
+      "description": "Flood the homepage with a large number of requests from the load generator",
+      "state": "ENABLED",
+      "variants": {
+        "on": 100,
+        "off": 0
+      },
+      "defaultVariant": "off"
+    },
+    "paymentFailure": {
+      "description": "Generate an error when calling the payment service charge method",
+      "state": "ENABLED",
+      "variants": {
+        "off": 0,
+        "10%": 0.1,
+        "25%": 0.25,
+        "50%": 0.5,
+        "75%": 0.75,
+        "90%": 0.95,
+        "100%": 1
+      },
+      "defaultVariant": "off"
+    },
+    "paymentUnreachable": {
+      "description": "Use a bad address for payment service to simulate it being unavailable",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "productCatalogFailure": {
+      "description": "Fail GetProduct requests for product ID OLJCESPC7Z",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "recommendationCacheFailure": {
+      "description": "Create a memory leak via an exponentially growing cache (1.4x growth, 50% of requests)",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    }
+  }
+}
